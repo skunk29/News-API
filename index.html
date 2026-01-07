@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>News API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    ul {
+      margin-top: 20px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Top U.S. News Headlines</h1>
+  <button id="loadNews">Show Latest News</button>
+
+  <ul id="newsList"></ul>
+
+  <script>
+    const apiKey = "86988f51a78c4a03a68061117923e801"; // Replace with your NewsAPI key
+    const button = document.getElementById("loadNews");
+    const newsList = document.getElementById("newsList");
+
+    button.addEventListener("click", () => {
+      newsList.innerHTML = "<li>Loading news...</li>";
+
+      const url =
+        "https://corsproxy.io/?" +
+        encodeURIComponent(
+          `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`
+        );
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          newsList.innerHTML = "";
+
+          if (!data.articles || data.articles.length === 0) {
+            newsList.innerHTML = "<li>No news found.</li>";
+            return;
+          }
+
+          data.articles.slice(0, 5).forEach(article => {
+            const li = document.createElement("li");
+            li.textContent = article.title;
+            newsList.appendChild(li);
+          });
+
+          console.log("News API response:", data);
+        })
+        .catch(error => {
+          newsList.innerHTML = "<li>Error getting news.</li>";
+          console.error("Error fetching news:", error);
+        });
+    });
+  </script>
+
+</body>
+</html>
